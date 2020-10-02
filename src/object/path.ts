@@ -1,6 +1,6 @@
 import { path as ramdaPath } from "ramda";
 
-import { isString } from "./is";
+import { isString } from "../is";
 
 export function splitByPoint(path: string) {
   return path.split(".");
