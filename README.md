@@ -13,16 +13,6 @@ npm i @worksolutions/utils
 
 ---
 
-#### Decorators
-###### provideRef
-
-```typescript jsx
-const ref1 = React.useRef<HTMLElement>();
-function ref2(element: HTMLElement) {}
-
-return <div ref={provideRef(ref1, ref2)} />
-```
-
 #### files
 ###### convertBytesToHumanReadableFormat
 ```typescript jsx
