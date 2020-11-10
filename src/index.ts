@@ -1,3 +1,6 @@
+export * from "./decorators/eventValue";
+export * from "./decorators/preventDefault";
+export * from "./decorators/stopPropagation";
 export * from "./files/bytesToHumanReadableFormat";
 export * from "./files/createFileInput";
 export * from "./files/inputAccept";
@@ -20,7 +23,5 @@ export * from "./mapObjectEntries";
 export * from "./memoizeWithContext";
 export * from "./nbsp";
 export * from "./path";
-export * from "./preventDefault";
 export * from "./searchInString";
 export * from "./splitPromiseIntoStates";
-export * from "./stopPropagation";
