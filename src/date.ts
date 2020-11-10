@@ -1,6 +1,6 @@
 import "moment/locale/ru";
-import moment, { LocaleSpecification, Moment } from "moment";
-import { sort } from "ramda";
+import moment, { LocaleSpecification, Moment, unitOfTime } from "moment";
+import { sort, uniqWith } from "ramda";
 
 // @ts-ignore
 const config = moment.localeData("ru")["_config"] as LocaleSpecification;
@@ -32,4 +32,7 @@ export enum DateMode {
 
 export const sortDates = (dates: Moment[]): Moment[] => sort((a: Moment, b: Moment) => a.diff(b), dates);
 
-export const now = moment();
+export const uniqDatesBy = (by?: unitOfTime.StartOf) => (dates: Moment[]): Moment[] =>
+  uniqWith((prevDate, currDate) => prevDate.isSame(currDate, by), dates);
+
+export const today = moment();

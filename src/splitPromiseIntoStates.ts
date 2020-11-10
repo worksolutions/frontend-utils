@@ -1,5 +1,5 @@
-export function promisifyAPI<T>(
-  api: () => Promise<T>,
+export function splitPromiseIntoStates<T>(
+  promiseCreator: () => Promise<T>,
   states: {
     stateStart?: () => any;
     stateSuccess?: (data: T) => any;
@@ -9,7 +9,7 @@ export function promisifyAPI<T>(
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     if (states.stateStart) states.stateStart();
-    api().then(
+    promiseCreator().then(
       (data) => {
         if (states.stateSuccess) states.stateSuccess(data);
         resolve(data);
