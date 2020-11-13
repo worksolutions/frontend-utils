@@ -30,7 +30,7 @@ export enum DateMode {
   __UNIVERSAL_DATETIME = "__UNIVERSAL_DATETIME",
 }
 
-export class Intl {
+export class INTL {
   static universalDates = {
     __UNIVERSAL_DATE: "DD.MM.YYYY",
     __UNIVERSAL_TIME: "HH:mm",
@@ -42,19 +42,19 @@ export class Intl {
     en: () => null,
   };
 
-  static currentLocalDate: Moment = null!;
-
   private static makePathByStringWithDots<T extends string>(stringWithDots: string) {
     return path<T>(splitByPoint(stringWithDots));
   }
 
+  currentLocalDate: Moment = null!;
+
   constructor(public config: IntlDictionaryInterface) {}
 
   async init() {
-    const updater = Intl.callMomentUpdaters[this.config.momentLanguageCode];
-    moment.locale(this.config.momentLanguageCode);
-    Intl.currentLocalDate = moment();
+    const updater = INTL.callMomentUpdaters[this.config.momentLanguageCode];
     if (updater) await updater();
+    moment.locale(this.config.momentLanguageCode);
+    this.currentLocalDate = moment();
   }
 
   getDateMode = (mode: DateMode) => this.config.dateConverterMap[mode];
@@ -62,11 +62,11 @@ export class Intl {
   date = (date: Moment, mode: DateMode) => date.format(this.getDateMode(mode));
 
   text = memoizeWith(string1, <T extends string>(pathString: string) =>
-    Intl.makePathByStringWithDots<T>(pathString)(this.config.textDictionary),
+    INTL.makePathByStringWithDots<T>(pathString)(this.config.textDictionary),
   );
 
   decl = memoizeWith(string2, (count: number, pathString: string) => {
-    const dict = Intl.makePathByStringWithDots(pathString)(this.config.decl.dict);
+    const dict = INTL.makePathByStringWithDots(pathString)(this.config.decl.dict);
     return this.config.decl.converter(count, dict);
   });
 }
