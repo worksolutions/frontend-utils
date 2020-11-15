@@ -1,4 +1,4 @@
-import { is } from "ramda";
+import { complement, is, isNil } from "ramda";
 
 export function isString(arg: any): arg is string {
   return is(String, arg);
@@ -19,3 +19,5 @@ export function isArray(arg: any): arg is Array<any> {
 export function isPureObject(arg: any): arg is Record<string, any> {
   return is(Object, arg) && !Array.isArray(arg);
 }
+
+export const isNotNil = complement(isNil);
