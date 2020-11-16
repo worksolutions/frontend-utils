@@ -1,7 +1,7 @@
 {
   "name": "@worksolutions/utils",
   "private": false,
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,6 +29,7 @@
     "mobx": "^5.*",
     "moment": "^2.*",
     "ramda": "^0.27.*",
+    "reflect-metadata": "^0.1.13",
     "typedi": "*"
   }
 }
