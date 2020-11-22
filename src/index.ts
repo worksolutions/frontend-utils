@@ -7,7 +7,7 @@ export * from "./files/createFileInput";
 export * from "./files/inputAccept";
 export * from "./intl";
 export * from "./intl/wordDeclination";
-export * from "./request/defaultDecoders";
+export * from "./decoders";
 export * from "./request";
 export * from "./state/loadingContainer";
 export * from "./types/DecoderType";

@@ -4,8 +4,8 @@ import { isNil } from "ramda";
 import moment, { Moment } from "moment";
 import { isNothing } from "maybeasy";
 
-import { isString } from "../is";
-import { DateMode } from "../intl";
+import { isString } from "./is";
+import { DateMode } from "./intl";
 
 export const identityValueDecoder = new Decoder(ok);
 
@@ -44,4 +44,12 @@ export const momentFieldDecoder = (key: string, mode: DateMode, defaultValue?: M
     if (isNothing(maybeValue)) return defaultValue;
     const value = maybeValue.getOrElseValue(null!);
     return !value.length ? defaultValue : moment(value, mode);
+  });
+
+export const mergeRightDecoders = <FIRST, SECOND>(firstDecoder: Decoder<FIRST>, secondDecoder: Decoder<SECOND>) =>
+  new Decoder<FIRST & SECOND>((input) => {
+    const first = firstDecoder.decodeAny(input);
+    return first.andThen((firstValue) =>
+      secondDecoder.map((secondValue) => ({ ...firstValue, ...secondValue })).decodeAny(input),
+    );
   });

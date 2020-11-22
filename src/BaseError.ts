@@ -2,7 +2,7 @@ import Decoder, { field, keyValuePairs, string, succeed } from "jsonous";
 import { fromPairs } from "ramda";
 import { ok } from "resulty";
 
-import { withDefaultValueDecoder } from "./request/defaultDecoders";
+import { withDefaultValueDecoder } from "./decoders";
 
 interface ErrorInterface {
   message: string;
