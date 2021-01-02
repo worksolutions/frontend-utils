@@ -2,7 +2,7 @@ import Decoder, { field, keyValuePairs, string, succeed } from "jsonous";
 import { fromPairs } from "ramda";
 import { ok } from "resulty";
 
-import { withDefaultValueDecoder } from "./decoders";
+import { orDefaultDecoder } from "./decoders";
 
 interface ErrorInterface {
   message: string;
@@ -10,10 +10,10 @@ interface ErrorInterface {
 }
 
 const errorDecoder = succeed({})
-  .assign("message", withDefaultValueDecoder(field("message", string), ""))
+  .assign("message", orDefaultDecoder(field("message", string), ""))
   .assign(
     "errors",
-    withDefaultValueDecoder(
+    orDefaultDecoder(
       field(
         "errors",
         keyValuePairs(

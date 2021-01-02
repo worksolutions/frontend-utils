@@ -1,42 +1,35 @@
-import Decoder, { field, succeed, string, maybe } from "jsonous";
-import { ok, err } from "resulty";
+import Decoder, { field, maybe, string, succeed } from "jsonous";
+import { err, ok } from "resulty";
 import { isNil } from "ramda";
 import moment, { Moment } from "moment";
 import { isNothing } from "maybeasy";
 
-import { isString } from "./is";
 import { DateMode } from "./intl";
 
 export const identityValueDecoder = new Decoder(ok);
 
 export const valueDecoder = <T>(inputValue: T) =>
   new Decoder<T>((value) =>
-    value === inputValue ? ok<string, T>(value) : err(`Пришло: "${value}"; Ожидалось "${inputValue}"`),
+    value === inputValue ? ok<string, T>(value) : err(`Income: "${value}"; Expect: "${inputValue}"`),
   );
 
-export const withDefaultValueDecoder = <A, D>(decoder: Decoder<A>, defaultValue: D) =>
+export const orDefaultDecoder = <DECODER_VALUE, DEFAULT_VALUE>(
+  decoder: Decoder<DECODER_VALUE>,
+  defaultValue: DEFAULT_VALUE,
+) =>
   new Decoder((value: Record<string, any>) =>
     decoder.decodeAny(value).cata({
-      Ok: (value) => ok<string, A | D>(value),
-      Err: () => ok<string, D>(defaultValue),
+      Ok: (value) => ok<string, DECODER_VALUE | DEFAULT_VALUE>(value),
+      Err: () => ok<string, DEFAULT_VALUE>(defaultValue),
     }),
   );
 
-export const fieldWithDefaultDecoder = <A>(key: string, decoder: Decoder<A>, defaultValue: A | null = null) =>
+export const fieldOrDefaultDecoder = <A>(key: string, decoder: Decoder<A>, defaultValue: A | null = null) =>
   new Decoder((value: Record<string, any>) => {
-    if (isNil(value[key])) {
-      return ok(defaultValue);
-    }
-    return decoder.decodeAny(value[key]).cata({
-      Ok: (value) => ok<string, A>(value),
-      Err: (error) => err<string, A>(error),
-    });
-  });
+    if (isNil(value[key])) return ok(defaultValue);
 
-export const codeTitleFieldDecoder = (code: string | Decoder<string | null>, title: string | Decoder<string | null>) =>
-  succeed({})
-    .assign("code", isString(code) ? fieldWithDefaultDecoder(code, string, "") : code)
-    .assign("title", isString(title) ? fieldWithDefaultDecoder(title, string, "") : title);
+    return orDefaultDecoder(value[key], defaultValue).decodeAny(value);
+  });
 
 export const momentFieldDecoder = (key: string, mode: DateMode, defaultValue?: Moment) =>
   maybe(field(key, string)).map((maybeValue) => {
@@ -45,6 +38,10 @@ export const momentFieldDecoder = (key: string, mode: DateMode, defaultValue?: M
     const value = maybeValue.getOrElseValue(null!);
     return !value.length ? defaultValue : moment(value, mode);
   });
+
+export function toInstanceDecoder<T>(Class: { new (): T }): (obj: Partial<T>) => Decoder<T> {
+  return (obj) => succeed(Object.assign(new Class(), obj));
+}
 
 export const mergeRightDecoders = <FIRST, SECOND>(firstDecoder: Decoder<FIRST>, secondDecoder: Decoder<SECOND>) =>
   new Decoder<FIRST & SECOND>((input) => {
