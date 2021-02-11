@@ -27,8 +27,9 @@
     "declaration": true,
     "outDir": "dist"
   },
+  "include": ["src"],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
   ]
 }
