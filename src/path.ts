@@ -6,7 +6,7 @@ export function splitByPoint(path: string) {
   return path.split(".");
 }
 
-export function path(fullPath: string | string[], obj: any): any {
+export function path(fullPath: string | (string | number)[], obj: any): any {
   if (isString(fullPath)) return ramdaPath(splitByPoint(fullPath), obj);
   return ramdaPath(fullPath, obj);
 }

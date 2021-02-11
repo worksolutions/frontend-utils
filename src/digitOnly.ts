@@ -1,1 +1,1 @@
-export const digitOnly = (phone: string) => phone.replace(/\D/g, "");
+export const digitOnly = (string: string) => string.replace(/\D/g, "");
