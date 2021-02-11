@@ -1,11 +1,9 @@
-import { EventEmitter as EE } from "events";
-
 export class EventEmitter<LIST_EVENTS_TYPES> {
-  private eventEmitter: EE;
+  private eventEmitter: Record<string, any>;
 
-  constructor() {
-    this.eventEmitter = new EE();
-    this.eventEmitter.setMaxListeners(0);
+  constructor(ExternalEventEmitter: { new (): any }, maxListeners = 0) {
+    this.eventEmitter = new ExternalEventEmitter();
+    this.eventEmitter.setMaxListeners(maxListeners);
   }
 
   emit<TYPE extends keyof LIST_EVENTS_TYPES>(type: TYPE, payload: LIST_EVENTS_TYPES[TYPE]) {

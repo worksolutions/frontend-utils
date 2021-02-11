@@ -47,7 +47,7 @@ export class BaseError {
   constructor(error: any) {
     this.error = errorDecoder
       .decodeAny(error)
-      .getOrElseValue({ message: "Не удалось определить формат ошибки", errors: {} });
+      .getOrElseValue({ message: "Не удалось определить формат ошибки", errors: {} }); //TODO: вынести в INTL
   }
 
   hasErrors() {

@@ -18,7 +18,7 @@ export * from "./BaseError";
 export * from "./capitalizeFirstStringCharacter";
 export * from "./date/date";
 export * from "./events";
-export * from "./helpers";
+export * from "./digitOnly";
 export * from "./htmlCollectionToArray";
 export * from "./is";
 export * from "./isDeepEqual";
