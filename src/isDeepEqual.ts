@@ -1,3 +1,5 @@
+import { omit } from "ramda";
+
 export function isDeepEqual(objA: any, objB: any) {
   if (Object.is(objA, objB)) return true;
 
@@ -26,4 +28,12 @@ export function isDeepEqual(objA: any, objB: any) {
   }
 
   return true;
+}
+
+export function makeExcludingDeepEqual(excludeObjectKeys: string[]) {
+  return function (obj1: Record<string, any>, obj2: Record<string, any>) {
+    const resultObjA = omit(excludeObjectKeys, obj1);
+    const resultObjB = omit(excludeObjectKeys, obj2);
+    return isDeepEqual(resultObjA, resultObjB);
+  };
 }
