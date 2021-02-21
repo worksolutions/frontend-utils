@@ -13,6 +13,7 @@ export * from "./state/loadingContainer";
 export * from "./types/DecoderType";
 export * from "./types/FileInterface";
 export * from "./types/SuggestInterface";
+export * from "./types/MatchStringStart";
 export * from "./asyncTimeout";
 export * from "./BaseError";
 export * from "./capitalizeFirstStringCharacter";
