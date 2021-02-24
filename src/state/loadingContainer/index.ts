@@ -1,22 +1,30 @@
 import { Service } from "typedi";
-import { action, observable } from "mobx";
+import { makeAutoObservable } from "mobx";
 
 type ErrorInterface = Record<string, string | null>;
 
 @Service({ transient: true })
 export class LoadingContainer {
-  @observable loading!: boolean;
-  @observable errors: ErrorInterface = {};
+  loading!: boolean;
+  errors: ErrorInterface = {};
 
   constructor(loading = false) {
+    makeAutoObservable(this, { promisifyLibState: false });
     this.loading = loading;
   }
 
-  @action.bound
-  private promisifyStateSuccess(arg: any) {
+  private promisifyStateSuccess = (arg: any) => {
     this.stopLoading();
     return arg;
-  }
+  };
+
+  startLoading = () => {
+    this.loading = true;
+  };
+
+  stopLoading = () => {
+    this.loading = false;
+  };
 
   promisifyLibState = {
     stateStart: this.startLoading,
@@ -24,47 +32,28 @@ export class LoadingContainer {
     stateError: this.stopLoading,
   };
 
-  @action
-  setLoading(loading: boolean) {
-    this.loading = loading;
-  }
-
-  @action.bound
-  startLoading() {
-    this.loading = true;
-  }
-
-  @action.bound
-  stopLoading() {
-    this.loading = false;
-  }
-
-  @action.bound
-  setError(name: string, value: string | null) {
+  setError = (name: string, value: string | null) => {
     this.errors[name] = value;
     this.runErrorsObserver();
-  }
+  };
 
   getError = (name: string) => this.errors[name];
 
-  @action.bound
-  setDefaultError(message: string) {
+  setDefaultError = (message: string) => {
     this.setError("defaultMessage", message);
-  }
+  };
 
   getDefaultError = () => this.getError("defaultMessage");
 
-  @action.bound
-  setErrors(errors: ErrorInterface) {
+  setErrors = (errors: ErrorInterface) => {
     this.errors = errors || {};
     if (!this.hasErrors()) return;
     this.runErrorsObserver();
-  }
+  };
 
-  @action.bound
-  clearErrors() {
+  clearErrors = () => {
     this.errors = {};
-  }
+  };
 
   getAnyError = () => {
     const defaultError = this.getDefaultError();
