@@ -9,8 +9,8 @@ export class LoadingContainer {
   errors: ErrorInterface = {};
 
   constructor(loading = false) {
-    makeAutoObservable(this, { promisifyLibState: false });
     this.loading = loading;
+    makeAutoObservable(this, { promisifyLibState: false });
   }
 
   private promisifyStateSuccess = (arg: any) => {
