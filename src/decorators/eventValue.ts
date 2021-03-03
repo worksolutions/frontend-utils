@@ -1,10 +1,6 @@
-export function eventValue<T = string>(func: (data: T) => void) {
-  return function (ev?: any) {
-    if (ev?.target) {
-      func(ev.target.value);
-      return;
-    }
-
-    func((null as unknown) as T);
+export function eventValue<EVENT extends Event>(callback: (targetValue: string) => void) {
+  return function (event: EVENT & { target: HTMLElement & { value: string } }) {
+    callback(event.target.value);
+    return event;
   };
 }
