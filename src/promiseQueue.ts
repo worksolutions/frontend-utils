@@ -1,18 +1,30 @@
 export function promiseQueue(parallelCount: number) {
-  const activeTasks = new Set<Promise<any>>();
+  const activeTasks: Promise<any>[] = [];
+  const inactiveTasksMakers: (() => Promise<any>)[] = [];
 
-  return function addToQueue<T>(promiseMaker: () => Promise<T>): Promise<T> {
+  function addToQueue<T>(taskMaker: () => Promise<T>): Promise<T> {
     return new Promise((resolve, reject) => {
-      if (activeTasks.size < parallelCount) {
-        const task = promiseMaker().then(resolve, reject);
-        activeTasks.add(task);
-        task.finally(() => activeTasks.delete(task));
+      const makeTask = () => taskMaker().then(resolve, reject);
+
+      if (activeTasks.length < parallelCount) {
+        const task = makeTask();
+        activeTasks.push(task);
+        task.finally(() => {
+          activeTasks.splice(activeTasks.indexOf(task), 1);
+          runFirstInactiveTask();
+        });
         return;
       }
 
-      const [firstActiveTask] = [...activeTasks.values()];
-
-      firstActiveTask.finally(() => addToQueue(promiseMaker).then(resolve, reject));
+      inactiveTasksMakers.push(makeTask);
     });
-  };
+  }
+
+  function runFirstInactiveTask() {
+    const firstInactiveTask = inactiveTasksMakers.shift();
+    if (!firstInactiveTask) return;
+    addToQueue(firstInactiveTask);
+  }
+
+  return addToQueue;
 }
