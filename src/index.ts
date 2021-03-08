@@ -32,3 +32,4 @@ export * from "./searchInString";
 export * from "./splitPromiseIntoStates";
 export * from "./stringMemoHelper";
 export * from "./promiseQueue";
+export * from "./rand";
