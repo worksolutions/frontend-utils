@@ -30,7 +30,7 @@ export function fieldOrDefaultDecoder<A>(key: string, decoder: Decoder<A>, defau
   return new Decoder((value: Record<string, any>) => {
     if (isNil(value[key])) return ok(defaultValue);
 
-    return orDefaultDecoder(value[key], defaultValue).decodeAny(value);
+    return orDefaultDecoder(field(key, decoder), defaultValue).decodeAny(value);
   });
 }
 
