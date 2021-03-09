@@ -26,11 +26,7 @@ export function orDefaultDecoder<DECODER_VALUE, DEFAULT_VALUE>(
   );
 }
 
-export function fieldOrDefaultDecoder<A>(
-  key: string,
-  decoder: Decoder<A>,
-  defaultValue: A | undefined | null = undefined,
-) {
+export function fieldOrDefaultDecoder<A>(key: string, decoder: Decoder<A>, defaultValue: A | undefined = undefined) {
   return new Decoder((value: Record<string, any>) => {
     if (isNil(value[key])) return ok(defaultValue);
 
