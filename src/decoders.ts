@@ -1,10 +1,6 @@
-import Decoder, { field, maybe, string, succeed } from "jsonous";
+import Decoder, { field, succeed } from "jsonous";
 import { err, ok } from "resulty";
 import { isNil } from "ramda";
-import moment, { Moment } from "moment";
-import { isNothing } from "maybeasy";
-
-import { DateMode } from "./intl";
 
 export const identityValueDecoder = new Decoder(ok);
 
@@ -31,15 +27,6 @@ export function fieldOrDefaultDecoder<A>(key: string, decoder: Decoder<A>, defau
     if (isNil(value[key])) return ok(defaultValue);
 
     return orDefaultDecoder(field(key, decoder), defaultValue).decodeAny(value);
-  });
-}
-
-export function momentFieldDecoder(key: string, mode: DateMode, defaultValue?: Moment) {
-  return maybe(field(key, string)).map((maybeValue) => {
-    defaultValue = defaultValue || moment.invalid();
-    if (isNothing(maybeValue)) return defaultValue;
-    const value = maybeValue.getOrElseValue(null!);
-    return !value.length ? defaultValue : moment(value, mode);
   });
 }
 
