@@ -1,4 +1,4 @@
-import { identityValueDecoder, valueDecoder, orDefaultDecoder, fieldOrDefaultDecoder } from "./decoders";
+import { identityValueDecoder, valueDecoder, orDefaultDecoder, fieldOrDefaultDecoder, enumDecoder } from "./decoders";
 import { string } from "jsonous";
 
 test("identity value decoder", function () {
@@ -28,4 +28,22 @@ test("field or default decoder", function () {
       .decodeAny({ "unreal-string-key": "real-value" })
       .getOrElseValue("unacceptable"),
   ).toBe("default-value");
+});
+
+test("enum decoder", function () {
+  enum Priorities {
+    LOW = "LOW_VALUE",
+    MEDIUM = "MEDIUM_VALUE",
+    HIGH = "HIGH_VALUE",
+  }
+
+  const matches = {
+    LOW: Priorities.LOW,
+    MEDIUM: Priorities.MEDIUM,
+    HIGH: Priorities.HIGH,
+  };
+
+  expect(enumDecoder(matches).decodeAny("LOW").getOrElseValue(null!)).toBe(Priorities.LOW);
+
+  expect(enumDecoder(matches).decodeAny("unexpected").getOrElseValue(null!)).toBe(null);
 });

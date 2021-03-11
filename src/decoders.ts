@@ -55,3 +55,10 @@ export function mergeRightDecoders<FIRST, SECOND>(firstDecoder: Decoder<FIRST>, 
     );
   });
 }
+
+export function enumDecoder<VALUES>(matches: Record<string | number, VALUES>) {
+  return new Decoder<VALUES>((input) => {
+    if (matches[input]) return ok(matches[input]);
+    return err(`enum decoder error.\nIncome ${JSON.stringify(input)};\nExpected: ${JSON.stringify(matches)}`);
+  });
+}
