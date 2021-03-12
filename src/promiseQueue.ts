@@ -28,3 +28,5 @@ export function promiseQueue(parallelCount: number) {
 
   return addToQueue;
 }
+
+export type AddToQueueFunction = ReturnType<typeof promiseQueue>;
