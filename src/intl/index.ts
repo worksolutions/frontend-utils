@@ -46,7 +46,7 @@ export class INTL {
   currentDate: DateTime = null!;
 
   constructor(public config: IntlDictionaryInterface) {
-    this.currentDate = DateTime.now().setLocale(config.languageCode);
+    this.currentDate = DateTime.now().set({ millisecond: 0 }).setLocale(config.languageCode);
   }
 
   formatDate = (date: DateTime, mode: DateMode) => date.toFormat(this.config.matchDateModeAndLuxonTypeLiteral[mode]);

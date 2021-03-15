@@ -23,6 +23,8 @@ export function isDateAfter({ comparisonWith, value }: CompareDatesConfig, compa
   return comparison.toMillis() > 0;
 }
 
+// TODO: чистить даты если передан comparisonBy
+// если comparisonBy === "hours" -> {...value, minutes: 0, seconds: 0, milliseconds: 0}
 export function isDateSame({ comparisonWith, value }: CompareDatesConfig, comparisonBy?: DurationUnit) {
   const comparison = value.diff(comparisonWith, comparisonBy);
   if (comparisonBy) {
