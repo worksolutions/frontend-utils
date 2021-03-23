@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime, DateTimeOptions, Zone } from "luxon";
 import { memoizeWith, path } from "ramda";
 
 import { string1, string2 } from "../stringMemoHelper";
@@ -56,14 +56,14 @@ export class INTL {
   }
 
   formatDate = (date: DateTime, mode: DateMode | string) => {
-    if (mode === DateMode.__UNIVERSAL_ISO) return date.toISO();
+    if (mode === DateMode.__UNIVERSAL_ISO) return date.toISO({});
     return date.toFormat(this.getFormat(mode), { locale: this.config.languageCode });
   };
 
-  getDateTime = (text: string, mode: DateMode | string) => {
-    const options = { locale: this.config.languageCode };
-    if (mode === DateMode.__UNIVERSAL_ISO) return DateTime.fromISO(text, options);
-    return DateTime.fromFormat(text, this.getFormat(mode), options);
+  getDateTime = (text: string, mode: DateMode | string, zone?: string | Zone) => {
+    const options: DateTimeOptions = { locale: this.config.languageCode };
+    if (mode === DateMode.__UNIVERSAL_ISO) return DateTime.fromISO(text, { ...options, zone: zone || "UTC" });
+    return DateTime.fromFormat(text, this.getFormat(mode), { ...options, zone });
   };
 
   text = memoizeWith(string1, <T extends string>(pathString: string) =>

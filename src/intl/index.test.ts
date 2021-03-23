@@ -272,3 +272,10 @@ test("INTL date utils - isDateAfter - hours", function () {
   expect(isDateAfter({ value: currentDay, comparisonWith: prev2Hours }, "minutes")).toBe(true);
   expect(isDateAfter({ value: currentDay, comparisonWith: prev2Hours }, "hours")).toBe(true);
 });
+
+test("INTL date zones", function () {
+  const intl = getIntl();
+  const dateTime = intl.getDateTime("10.10.2020 10:00", "DATE_TIME", "UTC");
+  expect(dateTime.hour).toBe(10);
+  expect(dateTime.setZone("Europe/Moscow").hour).toBe(13);
+});
