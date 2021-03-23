@@ -49,10 +49,16 @@ export class INTL {
     this.currentDate = DateTime.now().set({ millisecond: 0 }).setLocale(config.languageCode);
   }
 
-  formatDate = (date: DateTime, mode: DateMode) => date.toFormat(this.config.matchDateModeAndLuxonTypeLiteral[mode]);
+  private getFormat(mode: DateMode | string) {
+    if (mode in this.config.matchDateModeAndLuxonTypeLiteral)
+      return this.config.matchDateModeAndLuxonTypeLiteral[mode as DateMode];
+    return mode;
+  }
 
-  getDateTime = (text: string, mode: DateMode) =>
-    DateTime.fromFormat(text, this.config.matchDateModeAndLuxonTypeLiteral[mode], { locale: this.config.languageCode });
+  formatDate = (date: DateTime, mode: DateMode | string) => date.toFormat(this.getFormat(mode));
+
+  getDateTime = (text: string, mode: DateMode | string) =>
+    DateTime.fromFormat(text, this.getFormat(mode), { locale: this.config.languageCode });
 
   text = memoizeWith(string1, <T extends string>(pathString: string) =>
     INTL.makePathByStringWithDots<T>(pathString)(this.config.textDictionary),
