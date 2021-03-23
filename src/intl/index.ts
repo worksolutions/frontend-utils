@@ -50,15 +50,21 @@ export class INTL {
   }
 
   private getFormat(mode: DateMode | string) {
-    if (mode in this.config.matchDateModeAndLuxonTypeLiteral)
-      return this.config.matchDateModeAndLuxonTypeLiteral[mode as DateMode];
+    const matches = this.config.matchDateModeAndLuxonTypeLiteral;
+    if (mode in matches) return matches[mode as DateMode];
     return mode;
   }
 
-  formatDate = (date: DateTime, mode: DateMode | string) => date.toFormat(this.getFormat(mode));
+  formatDate = (date: DateTime, mode: DateMode | string) => {
+    if (mode === DateMode.__UNIVERSAL_ISO) return date.toISO();
+    return date.toFormat(this.getFormat(mode), { locale: this.config.languageCode });
+  };
 
-  getDateTime = (text: string, mode: DateMode | string) =>
-    DateTime.fromFormat(text, this.getFormat(mode), { locale: this.config.languageCode });
+  getDateTime = (text: string, mode: DateMode | string) => {
+    const options = { locale: this.config.languageCode };
+    if (mode === DateMode.__UNIVERSAL_ISO) return DateTime.fromISO(text, options);
+    return DateTime.fromFormat(text, this.getFormat(mode), options);
+  };
 
   text = memoizeWith(string1, <T extends string>(pathString: string) =>
     INTL.makePathByStringWithDots<T>(pathString)(this.config.textDictionary),
