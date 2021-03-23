@@ -272,12 +272,3 @@ test("INTL date utils - isDateAfter - hours", function () {
   expect(isDateAfter({ value: currentDay, comparisonWith: prev2Hours }, "minutes")).toBe(true);
   expect(isDateAfter({ value: currentDay, comparisonWith: prev2Hours }, "hours")).toBe(true);
 });
-
-// test("INTL date utils", function () {
-//   const intl = getIntl();
-//
-//   const viewDateTime = intl.currentDate;
-//   const selectedDateTime = intl.getDateTime("15.03.2021 15:00", DateMode.DATE_TIME);
-//
-//   expect(isDateSame({ value: viewDateTime.set({ day: 14 }), comparisonWith: selectedDateTime }, "day")).toBe(false);
-// });

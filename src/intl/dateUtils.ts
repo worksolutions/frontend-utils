@@ -1,4 +1,5 @@
 import { DateTime, DurationUnit } from "luxon";
+import { cleanDateByPrecision } from "./dateCleaner";
 
 type CompareDatesConfig = {
   value: DateTime;
@@ -6,31 +7,32 @@ type CompareDatesConfig = {
 };
 
 export function isDateBefore({ comparisonWith, value }: CompareDatesConfig, comparisonBy?: DurationUnit) {
-  const comparison = value.diff(comparisonWith, comparisonBy);
   if (comparisonBy) {
-    return comparison.as(comparisonBy) <= -1;
+    const cleanedValue = cleanDateByPrecision(comparisonBy, value);
+    const cleanedComparisonWith = cleanDateByPrecision(comparisonBy, comparisonWith);
+    return cleanedValue.diff(cleanedComparisonWith, comparisonBy).as(comparisonBy) <= -1;
   }
 
-  return comparison.toMillis() < 0;
+  return value.diff(comparisonWith).toMillis() < 0;
 }
 
 export function isDateAfter({ comparisonWith, value }: CompareDatesConfig, comparisonBy?: DurationUnit) {
-  const comparison = value.diff(comparisonWith, comparisonBy);
   if (comparisonBy) {
-    return comparison.as(comparisonBy) >= 1;
+    const cleanedValue = cleanDateByPrecision(comparisonBy, value);
+    const cleanedComparisonWith = cleanDateByPrecision(comparisonBy, comparisonWith);
+    return cleanedValue.diff(cleanedComparisonWith, comparisonBy).as(comparisonBy) >= 1;
   }
 
-  return comparison.toMillis() > 0;
+  return value.diff(comparisonWith).toMillis() > 0;
 }
 
-// TODO: чистить даты если передан comparisonBy
-// если comparisonBy === "hours" -> {...value, minutes: 0, seconds: 0, milliseconds: 0}
 export function isDateSame({ comparisonWith, value }: CompareDatesConfig, comparisonBy?: DurationUnit) {
-  const comparison = value.diff(comparisonWith, comparisonBy);
   if (comparisonBy) {
-    const comparisonValue = comparison.as(comparisonBy);
+    const cleanedValue = cleanDateByPrecision(comparisonBy, value);
+    const cleanedComparisonWith = cleanDateByPrecision(comparisonBy, comparisonWith);
+    const comparisonValue = cleanedValue.diff(cleanedComparisonWith, comparisonBy).as(comparisonBy);
     return comparisonValue > -1 && comparisonValue < 1;
   }
 
-  return comparison.toMillis() === 0;
+  return value.diff(comparisonWith).toMillis() === 0;
 }
