@@ -1,7 +1,7 @@
 {
   "name": "@worksolutions/utils",
   "private": false,
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "",
   "types": "dist/esm/index.d.ts",
   "main": "dist/cjs/index.js",
@@ -15,7 +15,8 @@
     "build": "rm -rf dist && NODE_ENV=production && node_modules/typescript/bin/tsc --module ESNext --outDir dist/esm && node_modules/typescript/bin/tsc --module commonjs --outDir dist/cjs",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "prepublish": "npm run test && npm run build"
+    "prepublish": "npm run test && npm run build",
+    "lint": "eslint \"src/**/*.{ts,tsx}\""
   },
   "author": "Anatoly Grabarov",
   "license": "ISC",
@@ -23,12 +24,18 @@
   "devDependencies": {
     "@types/jest": "^26.0.20",
     "@types/luxon": "^1.26.2",
-    "@types/ramda": "^0.27.38",
     "@types/node": "^14.14.33",
+    "@types/ramda": "^0.27.38",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "eslint": "^7.22.0",
+    "eslint-plugin-import": "^2.22.1",
+    "husky": "^4.3.8",
     "jest": "^26.6.3",
+    "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
     "ts-jest": "^26.5.1",
-    "typescript": "^4.1.5"
+    "typescript": "^4.2.3"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -39,5 +46,51 @@
     "reflect-metadata": "^0.1.13",
     "typedi": "^0.10.0",
     "utility-types": "^3.10.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx,json}": [
+      "prettier --write",
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "eslintConfig": {
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "extends": [
+      "eslint:recommended",
+      "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+      "max-len": [
+        "error",
+        {
+          "code": 120,
+          "ignoreStrings": true,
+          "ignoreTrailingComments": true,
+          "ignoreUrls": true,
+          "ignoreRegExpLiterals": true
+        }
+      ],
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "no-unused-expressions": "error",
+      "no-unused-vars": "off",
+      "complexity": [
+        "error",
+        {
+          "max": 7
+        }
+      ]
+    }
   }
 }
