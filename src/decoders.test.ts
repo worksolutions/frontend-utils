@@ -20,14 +20,14 @@ test("field or default decoder", function () {
   expect(
     fieldOrDefaultDecoder("string-key", string, "default-value")
       .decodeAny({ "string-key": "real-value" })
-      .getOrElseValue("unacceptable"),
+      .getOrElseValue(""),
   ).toBe("real-value");
 
-  expect(
-    fieldOrDefaultDecoder("string-key", string, "default-value")
-      .decodeAny({ "unreal-string-key": "real-value" })
-      .getOrElseValue("unacceptable"),
-  ).toBe("default-value");
+  expect(fieldOrDefaultDecoder("string-key", string, "default-value").decodeAny({}).getOrElseValue("")).toBe(
+    "default-value",
+  );
+
+  expect(fieldOrDefaultDecoder("string-key", string).decodeAny({}).getOrElseValue("")).toBe(undefined);
 });
 
 test("enum decoder", function () {

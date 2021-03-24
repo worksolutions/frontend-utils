@@ -1,6 +1,7 @@
-import Decoder, { field, succeed } from "jsonous";
+import Decoder, { field, string, succeed } from "jsonous";
 import { err, ok } from "resulty";
 import { isNil } from "ramda";
+import { OptionalKeys, RequiredKeys } from "utility-types";
 
 export const identityValueDecoder = new Decoder(ok);
 
@@ -22,15 +23,24 @@ export function orDefaultDecoder<DECODER_VALUE, DEFAULT_VALUE>(
   );
 }
 
-export function fieldOrDefaultDecoder<A>(key: string, decoder: Decoder<A>, defaultValue: A | undefined = undefined) {
-  return new Decoder((value: Record<string, any>) => {
-    if (isNil(value[key])) return ok(defaultValue);
-
+export function fieldOrDefaultDecoder<A, D extends A | undefined>(
+  key: string,
+  decoder: Decoder<A>,
+  defaultValue: D = undefined as D,
+) {
+  return new Decoder<D extends undefined ? undefined : A>((value: Record<string, any>) => {
+    if (isNil(value[key])) return ok(defaultValue) as any;
     return orDefaultDecoder(field(key, decoder), defaultValue).decodeAny(value);
   });
 }
 
-export function toInstanceDecoder<T>(Class: { new (): T }): (obj: Partial<T>) => Decoder<T> {
+export function toInstanceDecoder<
+  T,
+  REQUIRED_KEYS extends RequiredKeys<T>,
+  OPTIONAL_KEYS extends OptionalKeys<T>
+>(Class: {
+  new (): T;
+}): (obj: Record<REQUIRED_KEYS, T[REQUIRED_KEYS]> & Partial<Record<OPTIONAL_KEYS, T[OPTIONAL_KEYS]>>) => Decoder<T> {
   return (obj) => succeed(Object.assign(new Class(), obj));
 }
 
