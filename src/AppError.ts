@@ -14,11 +14,6 @@ export class AppError {
   private errors: Record<string, AppErrorValue> = {};
 
   @action.bound
-  hasErrors() {
-    return Object.keys(this.errors).length !== 0;
-  }
-
-  @action.bound
   clearErrors() {
     this.message = "";
     this.errors = {};
@@ -36,9 +31,20 @@ export class AppError {
     this.runErrorsObserver();
   }
 
-  @action.bound
+  hasErrors() {
+    return Object.keys(this.errors).length !== 0;
+  }
+
+  hasAnyError() {
+    return this.hasErrors() || this.getMessage() !== "";
+  }
+
   getErrors() {
     return this.errors;
+  }
+
+  getError(errorName: string) {
+    return this.errors[errorName];
   }
 
   @action.bound
@@ -46,7 +52,6 @@ export class AppError {
     this.message = message;
   }
 
-  @action.bound
   getMessage() {
     return this.message;
   }
