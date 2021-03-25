@@ -8,12 +8,12 @@ export class AppRequestError extends AppError {
   }
 
   constructor(
-    private error: { message: string; errors: Record<string, AppErrorValue> },
+    private _error: { message: string; errors: Record<string, AppErrorValue> },
     public statusCode: number,
     public axiosError?: AxiosError,
   ) {
     super();
-    this.setMessage(error.message);
-    this.setErrors(error.errors);
+    this.setMessage(_error.message);
+    this.setErrors(_error.errors);
   }
 }

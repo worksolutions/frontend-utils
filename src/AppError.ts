@@ -1,4 +1,4 @@
-import { action, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 
 export type AppErrorValue = string | undefined;
 
@@ -7,11 +7,15 @@ export class AppError {
     return value instanceof AppError;
   }
 
-  @observable
-  private message = "";
+  constructor() {
+    makeObservable(this);
+  }
 
   @observable
-  private errors: Record<string, AppErrorValue> = {};
+  message = "";
+
+  @observable
+  errors: Record<string, AppErrorValue> = {};
 
   @action.bound
   clearErrors() {
@@ -36,11 +40,7 @@ export class AppError {
   }
 
   hasAnyError() {
-    return this.hasErrors() || this.getMessage() !== "";
-  }
-
-  getErrors() {
-    return this.errors;
+    return this.hasErrors() || this.message !== "";
   }
 
   getError(errorName: string) {
@@ -50,10 +50,6 @@ export class AppError {
   @action.bound
   setMessage(message: string) {
     this.message = message;
-  }
-
-  getMessage() {
-    return this.message;
   }
 
   private errorsObservers = new Set<Function>();

@@ -82,6 +82,11 @@ export class RequestManager {
       const { data } = await axios(requestData);
       return [data, null];
     } catch (axiosError) {
+      if (options.disableBeforeErrorMiddlewares) {
+        const appRequestError = makeDefaultAppRequestError(axiosError);
+        return [null, appRequestError];
+      }
+
       return [null, await RequestManager.applyAllBeforeErrorMiddleware(axiosError, requestData)];
     }
   }
@@ -111,14 +116,15 @@ export class RequestManager {
   }
 }
 
-RequestManager.beforeErrorMiddleware.push(
-  ({ nativeError }) =>
-    new AppRequestError(
-      { message: nativeError.message, errors: {} },
-      isNil(nativeError.code) ? -1 : parseFloat(nativeError.code),
-      nativeError,
-    ),
-);
+function makeDefaultAppRequestError(nativeError: AxiosError) {
+  return new AppRequestError(
+    { message: nativeError.message, errors: {} },
+    isNil(nativeError.response) ? -1 : nativeError.response.status,
+    nativeError,
+  );
+}
+
+RequestManager.beforeErrorMiddleware.push(({ nativeError }) => makeDefaultAppRequestError(nativeError));
 
 type CreateRequest<DecoderGenericType> = {
   url: string;
@@ -132,6 +138,7 @@ type CreateRequest<DecoderGenericType> = {
 interface RequestOptions {
   body?: any;
   options?: {
+    disableBeforeErrorMiddlewares?: boolean;
     progressReceiver?: (progress: number) => void;
   };
   urlParams?: { [name: string]: string | number };
