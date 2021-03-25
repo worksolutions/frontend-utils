@@ -34,3 +34,4 @@ export * from "./splitPromiseIntoStates";
 export * from "./stringMemoHelper";
 export * from "./promiseQueue";
 export * from "./rand";
+export * from "./findElementInDOMParentTree";
