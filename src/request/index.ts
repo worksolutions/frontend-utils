@@ -18,6 +18,8 @@ export enum METHODS {
 export class RequestManager {
   static baseURL = "";
 
+  static beforeRequestMiddleware: ((data: { config: AxiosRequestConfig }) => void | Promise<void>)[] = [];
+
   static beforeErrorMiddleware: ((data: {
     nativeError: AxiosError;
     config: AxiosRequestConfig;
@@ -25,7 +27,14 @@ export class RequestManager {
     previousAppRequestError: AppRequestError;
   }) => AppRequestError | Promise<AppRequestError>)[] = [];
 
-  private static async applyAllErrorMiddleware(nativeError: AxiosError, config: AxiosRequestConfig) {
+  private static async applyAllBeforeRequestMiddleware(config: AxiosRequestConfig) {
+    for (let i = 0; i < RequestManager.beforeRequestMiddleware.length; i++) {
+      const middleware = RequestManager.beforeRequestMiddleware[i];
+      await middleware({ config });
+    }
+  }
+
+  private static async applyAllBeforeErrorMiddleware(nativeError: AxiosError, config: AxiosRequestConfig) {
     const shareData: Record<string, any> = {};
     let result: AppRequestError | Promise<AppRequestError> = null!;
 
@@ -69,10 +78,11 @@ export class RequestManager {
     }
 
     try {
+      await RequestManager.applyAllBeforeRequestMiddleware(requestData);
       const { data } = await axios(requestData);
       return [data, null];
     } catch (axiosError) {
-      return [null, await RequestManager.applyAllErrorMiddleware(axiosError, requestData)];
+      return [null, await RequestManager.applyAllBeforeErrorMiddleware(axiosError, requestData)];
     }
   }
 
