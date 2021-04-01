@@ -1,5 +1,4 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { isNil } from "ramda";
 import Decoder from "jsonous";
 import { Service } from "typedi";
 
@@ -21,11 +20,10 @@ export class RequestManager {
   static beforeRequestMiddleware: ((data: { config: AxiosRequestConfig }) => void | Promise<void>)[] = [];
 
   static beforeErrorMiddleware: ((data: {
-    nativeError: AxiosError;
+    error: AppRequestError;
     config: AxiosRequestConfig;
     shareData: Record<string, any>;
-    previousAppRequestError: AppRequestError;
-  }) => AppRequestError | Promise<AppRequestError>)[] = [];
+  }) => AppRequestError | Promise<AppRequestError | null> | null)[] = [];
 
   private static async applyAllBeforeRequestMiddleware(config: AxiosRequestConfig) {
     for (let i = 0; i < RequestManager.beforeRequestMiddleware.length; i++) {
@@ -34,19 +32,22 @@ export class RequestManager {
     }
   }
 
-  private static async applyAllBeforeErrorMiddleware(nativeError: AxiosError, config: AxiosRequestConfig) {
+  private static async applyAllBeforeErrorMiddleware(error: AppRequestError, config: AxiosRequestConfig) {
     const shareData: Record<string, any> = {};
     let result: AppRequestError | Promise<AppRequestError> = null!;
 
     for (let i = 0; i < RequestManager.beforeErrorMiddleware.length; i++) {
       const middleware = RequestManager.beforeErrorMiddleware[i];
-      result = await middleware({ nativeError, config, shareData, previousAppRequestError: result });
+      const middlewareResult = await middleware({ error, config, shareData });
+      if (!middlewareResult) break;
+
+      result = middlewareResult;
     }
 
     return result;
   }
 
-  private static async makeAndDecodeRequest({
+  private static async makeRequest({
     url,
     method,
     requestConfig,
@@ -80,15 +81,22 @@ export class RequestManager {
     try {
       await RequestManager.applyAllBeforeRequestMiddleware(requestData);
       const { data } = await axios(requestData);
-      return [data, null];
+      return [{ requestData, response: data }, null] as const;
     } catch (axiosError) {
-      if (options.disableBeforeErrorMiddlewares) {
-        const appRequestError = makeDefaultAppRequestError(axiosError);
-        return [null, appRequestError];
-      }
-
-      return [null, await RequestManager.applyAllBeforeErrorMiddleware(axiosError, requestData)];
+      return [
+        null,
+        { requestData, axiosError } as { requestData: AxiosRequestConfig; axiosError: AxiosError },
+      ] as const;
     }
+  }
+
+  private static async applyError(
+    error: AppRequestError,
+    requestData: AxiosRequestConfig,
+    requestOptions: RequestOptions = {},
+  ) {
+    if (requestOptions.options?.disableBeforeErrorMiddlewares) return error;
+    return await RequestManager.applyAllBeforeErrorMiddleware(error, requestData);
   }
 
   createRequest<DecoderValue>({
@@ -98,33 +106,37 @@ export class RequestManager {
     serverDataDecoder,
   }: CreateRequest<DecoderValue>) {
     return async function (requestOptions: RequestOptions = {}): Promise<DecoderValue> {
-      const [result, error] = await RequestManager.makeAndDecodeRequest({
+      const [requestResult, requestError] = await RequestManager.makeRequest({
         url,
         method,
         requestConfig,
         requestOptions,
       });
-      if (error) throw error;
-      if (!result || !serverDataDecoder) return null!;
-      const [data, decoderError] = serverDataDecoder.decodeAny(result).cata<[DecoderValue, any]>({
+
+      if (requestError)
+        throw await RequestManager.applyError(
+          AppRequestError.buildFromAxiosError(requestError.axiosError),
+          requestError.requestData,
+          requestOptions,
+        );
+
+      if (!requestResult || !serverDataDecoder) return null!;
+
+      const [data, decoderError] = serverDataDecoder.decodeAny(requestResult).cata<[DecoderValue, any]>({
         Ok: (val) => [val, null],
         Err: (err) => [null!, err],
       });
       if (!decoderError) return data;
-      throw new AppRequestError({ message: `Response parsing error: ${decoderError}`, errors: {} }, -1);
+      throw await RequestManager.applyError(
+        new AppRequestError({ message: `Response parsing error: ${decoderError}`, errors: {} }, -1),
+        requestResult.requestData,
+        requestOptions,
+      );
     };
   }
 }
 
-function makeDefaultAppRequestError(nativeError: AxiosError) {
-  return new AppRequestError(
-    { message: nativeError.message, errors: {} },
-    isNil(nativeError.response) ? -1 : nativeError.response.status,
-    nativeError,
-  );
-}
-
-RequestManager.beforeErrorMiddleware.push(({ nativeError }) => makeDefaultAppRequestError(nativeError));
+RequestManager.beforeErrorMiddleware.push(({ error }) => error);
 
 type CreateRequest<DecoderGenericType> = {
   url: string;

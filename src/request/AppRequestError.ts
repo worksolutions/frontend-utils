@@ -7,6 +7,10 @@ export class AppRequestError extends AppError {
     return data instanceof AppRequestError;
   }
 
+  static buildFromAxiosError(error: AxiosError) {
+    return new AppRequestError({ message: error.message, errors: {} }, error.response?.status ?? -1, error);
+  }
+
   constructor(
     private _error: { message: string; errors: Record<string, AppErrorValue> },
     public statusCode: number,
