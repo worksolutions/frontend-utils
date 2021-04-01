@@ -122,10 +122,13 @@ export class RequestManager {
 
       if (!requestResult || !serverDataDecoder) return null!;
 
-      const [data, decoderError] = serverDataDecoder.decodeAny(requestResult).cata<[DecoderValue, any]>({
-        Ok: (val) => [val, null],
-        Err: (err) => [null!, err],
-      });
+      const [data, decoderError] = serverDataDecoder
+        .decodeAny(requestResult.response)
+        .cata<[DecoderValue, string | null]>({
+          Ok: (val) => [val, null],
+          Err: (err) => [null!, err],
+        });
+
       if (!decoderError) return data;
       throw await RequestManager.applyError(
         new AppRequestError({ message: `Response parsing error: ${decoderError}`, errors: {} }, -1),
