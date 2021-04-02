@@ -51,9 +51,9 @@ export class RequestManager {
     url,
     method,
     requestConfig,
-    requestOptions: { options = {}, urlParams, body },
+    requestData: { options = {}, urlParams, body },
   }: Required<Pick<CreateRequest<any>, "url" | "method" | "requestConfig">> & {
-    requestOptions: RequestOptions;
+    requestData: RequestData;
   }) {
     const requestData: AxiosRequestConfig = {
       url,
@@ -92,11 +92,11 @@ export class RequestManager {
 
   private static async applyError(
     error: AppRequestError,
-    requestData: AxiosRequestConfig,
-    requestOptions: RequestOptions = {},
+    axiosRequestConfig: AxiosRequestConfig,
+    requestData: RequestData = {},
   ) {
-    if (requestOptions.options?.disableBeforeErrorMiddlewares) return error;
-    return await RequestManager.applyAllBeforeErrorMiddleware(error, requestData);
+    if (requestData.options?.disableBeforeErrorMiddlewares) return error;
+    return await RequestManager.applyAllBeforeErrorMiddleware(error, axiosRequestConfig);
   }
 
   createRequest<DecoderValue>({
@@ -105,19 +105,19 @@ export class RequestManager {
     requestConfig = {},
     serverDataDecoder,
   }: CreateRequest<DecoderValue>) {
-    return async function (requestOptions: RequestOptions = {}): Promise<DecoderValue> {
+    return async function (requestData: RequestData = {}): Promise<DecoderValue> {
       const [requestResult, requestError] = await RequestManager.makeRequest({
         url,
         method,
         requestConfig,
-        requestOptions,
+        requestData,
       });
 
       if (requestError)
         throw await RequestManager.applyError(
           AppRequestError.buildFromAxiosError(requestError.axiosError),
           requestError.requestData,
-          requestOptions,
+          requestData,
         );
 
       if (!requestResult || !serverDataDecoder) return null!;
@@ -133,7 +133,7 @@ export class RequestManager {
       throw await RequestManager.applyError(
         new AppRequestError({ message: `Response parsing error: ${decoderError}`, errors: {} }, -1),
         requestResult.requestData,
-        requestOptions,
+        requestData,
       );
     };
   }
@@ -150,11 +150,13 @@ type CreateRequest<DecoderGenericType> = {
   };
 };
 
-interface RequestOptions {
+export interface RequestOptions {
+  disableBeforeErrorMiddlewares?: boolean;
+  progressReceiver?: (progress: number) => void;
+}
+
+interface RequestData {
   body?: any;
-  options?: {
-    disableBeforeErrorMiddlewares?: boolean;
-    progressReceiver?: (progress: number) => void;
-  };
+  options?: RequestOptions;
   urlParams?: { [name: string]: string | number };
 }
