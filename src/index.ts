@@ -7,6 +7,7 @@ export * from "./files/createFileInput";
 export * from "./files/inputAccept";
 export * from "./intl";
 export * from "./intl/wordDeclinationRu";
+export * from "./intl/wordDeclinationEn";
 export * from "./intl/dateUtils";
 export * from "./decoders";
 export * from "./request";
