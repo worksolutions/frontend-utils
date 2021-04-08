@@ -51,7 +51,7 @@ export class RequestManager {
     url,
     method,
     requestConfig,
-    requestData: { options = {}, urlParams, body },
+    requestData: { options = {}, urlParams, additionalQueryParams, body },
   }: Required<Pick<CreateRequest<any>, "url" | "method" | "requestConfig">> & {
     requestData: RequestData;
   }) {
@@ -70,6 +70,10 @@ export class RequestManager {
 
     if (urlParams) {
       requestData.url = template(requestData.url!, urlParams);
+    }
+
+    if (additionalQueryParams) {
+      requestData.params = additionalQueryParams;
     }
 
     if (options.progressReceiver) {
@@ -157,6 +161,7 @@ export interface RequestOptions {
 
 interface RequestData {
   body?: any;
+  additionalQueryParams?: Record<string, string | number>;
   options?: RequestOptions;
-  urlParams?: { [name: string]: string | number };
+  urlParams?: Record<string, string | number>;
 }
