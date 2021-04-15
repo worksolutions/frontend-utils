@@ -36,3 +36,7 @@ export function isDateSame({ comparisonWith, value }: CompareDatesConfig, compar
 
   return value.diff(comparisonWith).toMillis() === 0;
 }
+
+export function getHalfYear(value: DateTime) {
+  return value.month > 5 ? 2 : 1;
+}
