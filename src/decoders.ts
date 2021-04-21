@@ -34,6 +34,12 @@ export function fieldOrDefaultDecoder<A, D extends A | undefined>(
   });
 }
 
+export function toInstance<T, REQUIRED_KEYS extends RequiredKeys<T>, OPTIONAL_KEYS extends OptionalKeys<T>>(Class: {
+  new (): T;
+}): (obj: Record<REQUIRED_KEYS, T[REQUIRED_KEYS]> & Partial<Record<OPTIONAL_KEYS, T[OPTIONAL_KEYS]>>) => T {
+  return (obj) => Object.assign(new Class(), obj);
+}
+
 export function toInstanceDecoder<
   T,
   REQUIRED_KEYS extends RequiredKeys<T>,
@@ -41,7 +47,7 @@ export function toInstanceDecoder<
 >(Class: {
   new (): T;
 }): (obj: Record<REQUIRED_KEYS, T[REQUIRED_KEYS]> & Partial<Record<OPTIONAL_KEYS, T[OPTIONAL_KEYS]>>) => Decoder<T> {
-  return (obj) => succeed(Object.assign(new Class(), obj));
+  return (obj) => succeed(toInstance(Class)(obj as any));
 }
 
 export function mergeRightDecoders<FIRST, SECOND>(firstDecoder: Decoder<FIRST>, secondDecoder: Decoder<SECOND>) {
