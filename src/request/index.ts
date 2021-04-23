@@ -34,17 +34,15 @@ export class RequestManager {
 
   private static async applyAllBeforeErrorMiddleware(error: AppRequestError, config: AxiosRequestConfig) {
     const shareData: Record<string, any> = {};
-    let result: AppRequestError | Promise<AppRequestError> = null!;
-
     for (let i = 0; i < RequestManager.beforeErrorMiddleware.length; i++) {
       const middleware = RequestManager.beforeErrorMiddleware[i];
       const middlewareResult = await middleware({ error, config, shareData });
       if (!middlewareResult) break;
 
-      result = middlewareResult;
+      error = middlewareResult;
     }
 
-    return result;
+    return error;
   }
 
   private static async makeRequest({
