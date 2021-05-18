@@ -82,8 +82,5 @@ export class INTL {
     return this.config.decl.converter(count, dict);
   });
 
-  rebuildCurrentDate = () => {
-    this.buildCurrentDate(this.config);
-    this.currentDate = this.currentDate.setZone(this.currentDate.zoneName);
-  };
+  rebuildCurrentDate = () => this.buildCurrentDate(this.config);
 }
