@@ -77,4 +77,11 @@ export class INTL {
     const dict = INTL.makePathByStringWithDots(pathString)(this.config.decl.dict);
     return this.config.decl.converter(count, dict);
   });
+
+  rebuildCurrentDate = (interval = 5000) => {
+    const { zone } = this.currentDate;
+    setInterval(() => {
+      this.currentDate = DateTime.now().set({ millisecond: 0 }).setZone(zone);
+    }, interval);
+  };
 }
