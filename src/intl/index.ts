@@ -46,10 +46,14 @@ export class INTL {
     return path<T>(splitByPoint(stringWithDots));
   }
 
+  private buildCurrentDate(config: IntlDictionaryInterface) {
+    this.currentDate = DateTime.now().set({ millisecond: 0 }).setLocale(config.languageCode);
+  }
+
   currentDate: DateTime = null!;
 
   constructor(public config: IntlDictionaryInterface) {
-    this.currentDate = DateTime.now().set({ millisecond: 0 }).setLocale(config.languageCode);
+    this.buildCurrentDate(config);
   }
 
   private getFormat(mode: DateMode | string) {
@@ -78,10 +82,8 @@ export class INTL {
     return this.config.decl.converter(count, dict);
   });
 
-  rebuildCurrentDate = (interval = 5000) => {
-    const { zone } = this.currentDate;
-    setInterval(() => {
-      this.currentDate = DateTime.now().set({ millisecond: 0 }).setZone(zone);
-    }, interval);
+  rebuildCurrentDate = () => {
+    this.buildCurrentDate(this.config);
+    this.currentDate = this.currentDate.setZone(this.currentDate.zoneName);
   };
 }
