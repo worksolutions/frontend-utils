@@ -36,3 +36,4 @@ export * from "./promiseQueue";
 export * from "./promiseSerial";
 export * from "./rand";
 export * from "./findElementInDOMParentTree";
+export * from "./recursiveFind";
