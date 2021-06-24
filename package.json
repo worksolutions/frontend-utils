@@ -1,7 +1,7 @@
 {
   "name": "@worksolutions/utils",
   "private": false,
-  "version": "1.2.27",
+  "version": "1.2.28",
   "description": "",
   "types": "dist/esm/index.d.ts",
   "main": "dist/cjs/index.js",
