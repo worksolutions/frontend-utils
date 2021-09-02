@@ -12,7 +12,7 @@
   },
   "scripts": {
     "format": "prettier --write --list-different \"src/**/*.{ts,tsx,js,json,yml}\"",
-    "build": "rm -rf dist && NODE_ENV=production && node_modules/typescript/bin/tsc --module ESNext --outDir dist/esm && node_modules/typescript/bin/tsc --module commonjs --outDir dist/cjs",
+    "build": "rm -rf dist && NODE_ENV=production && tsc --module ESNext --outDir dist/esm && tsc --module commonjs --outDir dist/cjs",
     "test": "jest",
     "test:coverage": "jest --coverage",
     "prepublish": "npm run test && npm run build",
