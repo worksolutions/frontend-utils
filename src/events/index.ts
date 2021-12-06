@@ -17,7 +17,11 @@ export class EventEmitter<LIST_EVENTS_TYPES> {
     this.eventEmitter.removeListener(event as string, handler);
   }
 
-  public on<TYPE extends keyof LIST_EVENTS_TYPES>(type: TYPE, handler: (payload: LIST_EVENTS_TYPES[TYPE]) => void) {
+  on<TYPE extends keyof LIST_EVENTS_TYPES>(type: TYPE, handler: (payload: LIST_EVENTS_TYPES[TYPE]) => void) {
     this.eventEmitter.addListener(type as string, handler);
+  }
+
+  once<TYPE extends keyof LIST_EVENTS_TYPES>(type: TYPE, handler: (payload: LIST_EVENTS_TYPES[TYPE]) => void) {
+    this.eventEmitter.once(type as string, handler);
   }
 }
