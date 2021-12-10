@@ -1,4 +1,4 @@
-import { DateTime, DateTimeOptions, Zone } from "luxon";
+import { DateTime, DateTimeFormatOptions, DateTimeOptions, Zone } from "luxon";
 
 export enum DateMode {
   DATE = "DATE",
@@ -7,9 +7,13 @@ export enum DateMode {
   DATE_WITH_STRING_SHORT_MONTH = "DATE_WITH_STRING_SHORT_MONTH",
   DATE_WITH_STRING_MONTH = "DATE_WITH_STRING_MONTH",
   TIME = "TIME",
+  TIME_WITH_SECONDS = "TIME_WITH_SECONDS",
   DATE_TIME = "DATE_TIME",
+  DATE_TIME_WITH_SECONDS = "DATE_TIME_WITH_SECONDS",
   DATE_TIME_WITH_STRING_MONTH = "DATE_TIME_WITH_STRING_MONTH",
+  DATE_TIME_WITH_STRING_MONTH_WITH_SECONDS = "DATE_TIME_WITH_STRING_MONTH_WITH_SECONDS",
   DATE_TIME_WITH_STRING_SHORT_MONTH = "DATE_TIME_WITH_STRING_SHORT_MONTH",
+  DATE_TIME_WITH_STRING_SHORT_MONTH_WITH_SECONDS = "DATE_TIME_WITH_STRING_SHORT_MONTH_WITH_SECONDS",
   HOURS = "HOURS",
   SHORT_HOURS = "SHORT_HOURS",
   MINUTES = "MINUTES",
@@ -46,13 +50,15 @@ export class IntlDate {
   private getFormat(mode: DateMode | string) {
     const matches = this.config.matchDateModeAndLuxonTypeLiteral;
     if (mode in matches) return matches[mode as DateMode];
-    return mode;
+    return mode.toString();
   }
 
   formatDate = (date: DateTime, mode: DateMode | string) => {
     if (mode === DateMode.__UNIVERSAL_ISO) return date.toISO({});
     return date.toFormat(this.getFormat(mode), { locale: this.config.languageCode });
   };
+
+  localeString = (date: DateTime, options?: DateTimeFormatOptions) => date.toLocaleString(options);
 
   getDateTime = (text: string, mode: DateMode | string, zone?: string | Zone) => {
     const options: DateTimeOptions = { locale: this.config.languageCode };
