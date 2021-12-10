@@ -1,8 +1,4 @@
 import { DateTime, DateTimeOptions, Zone } from "luxon";
-import { memoizeWith, path } from "ramda";
-
-import { string1, string2 } from "../stringMemoHelper";
-import { splitByPoint } from "../path";
 
 export enum DateMode {
   DATE = "DATE",
@@ -24,17 +20,12 @@ export enum DateMode {
   __UNIVERSAL_DATETIME = "__UNIVERSAL_DATETIME",
 }
 
-export interface IntlDictionaryInterface {
-  languageCode: "ru" | "en";
+export interface IntlDateDictionaryInterface {
+  languageCode: string;
   matchDateModeAndLuxonTypeLiteral: Record<DateMode, string>;
-  textDictionary: Record<string, any>;
-  decl: {
-    dict: Record<string, any>;
-    converter: (count: number, declValue: any) => string;
-  };
 }
 
-export class INTL {
+export class IntlDate {
   static universalDates = {
     __UNIVERSAL_ISO: "",
     __UNIVERSAL_DATE: "dd.MM.yyyy",
@@ -42,17 +33,13 @@ export class INTL {
     __UNIVERSAL_DATETIME: "dd.MM.yyyy HH:mm",
   };
 
-  private static makePathByStringWithDots<T extends string>(stringWithDots: string) {
-    return path<T>(splitByPoint(stringWithDots));
-  }
-
-  private buildCurrentDate(config: IntlDictionaryInterface) {
+  private buildCurrentDate(config: IntlDateDictionaryInterface) {
     this.currentDate = DateTime.now().set({ millisecond: 0 }).setLocale(config.languageCode);
   }
 
   currentDate: DateTime = null!;
 
-  constructor(public config: IntlDictionaryInterface) {
+  constructor(public config: IntlDateDictionaryInterface) {
     this.buildCurrentDate(config);
   }
 
@@ -73,14 +60,8 @@ export class INTL {
     return DateTime.fromFormat(text, this.getFormat(mode), { ...options, zone });
   };
 
-  text = memoizeWith(string1, <T extends string>(pathString: string) =>
-    INTL.makePathByStringWithDots<T>(pathString)(this.config.textDictionary),
-  );
-
-  decl = memoizeWith(string2, (count: number, pathString: string) => {
-    const dict = INTL.makePathByStringWithDots(pathString)(this.config.decl.dict);
-    return this.config.decl.converter(count, dict);
-  });
-
   rebuildCurrentDate = () => this.buildCurrentDate(this.config);
 }
+
+export * from "./dateCleaner";
+export * from "./dateUtils";

@@ -1,4 +1,4 @@
-import { wordDeclinationRu } from "./wordDeclinationRu";
+import { wordDeclinationRu } from "../intlDict";
 
 test("RU word declination function", function () {
   const titles = ["месяц", "месяца", "месяцев"];

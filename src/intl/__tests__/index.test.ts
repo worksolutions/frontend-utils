@@ -1,12 +1,8 @@
-import { DateMode, INTL } from "./index";
-import { wordDeclinationRu } from "./wordDeclinationRu";
-import { isDateAfter, isDateBefore, isDateSame } from "./dateUtils";
+import { DateMode, IntlDate, isDateAfter, isDateBefore, isDateSame } from "../intlDate";
 
 function getIntl() {
-  return new INTL({
+  return new IntlDate({
     languageCode: "ru",
-    decl: { dict: {}, converter: wordDeclinationRu },
-    textDictionary: {},
     matchDateModeAndLuxonTypeLiteral: {
       DAY_WITH_STRING_MONTH: "dd MMMM",
       DAY_WITH_STRING_SHORT_MONTH: "dd MMM",
@@ -21,7 +17,7 @@ function getIntl() {
       SHORT_HOURS: "H",
       MINUTES: "mm",
       SHORT_MINUTES: "m",
-      ...INTL.universalDates,
+      ...IntlDate.universalDates,
     },
   });
 }

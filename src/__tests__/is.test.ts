@@ -1,4 +1,4 @@
-import { isArray, isFunction, isNotNil, isNumber, isPureObject, isString } from "./is";
+import { isArray, isFunction, isNotNil, isNumber, isPureObject, isString } from "../is";
 
 test("detect arrays", function () {
   expect(isArray([])).toBe(true);
@@ -31,7 +31,11 @@ test("detect strings", function () {
 
 test("detect functions", function () {
   expect(isFunction(() => 1)).toBe(true);
-  expect(isFunction(function () {})).toBe(true);
+  expect(
+    isFunction(function () {
+      return null;
+    }),
+  ).toBe(true);
   expect(isFunction(1)).toBe(false);
 });
 

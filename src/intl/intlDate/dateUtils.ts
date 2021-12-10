@@ -1,4 +1,5 @@
 import { DateTime, DurationUnit } from "luxon";
+
 import { cleanDateByPrecision } from "./dateCleaner";
 
 type CompareDatesConfig = {

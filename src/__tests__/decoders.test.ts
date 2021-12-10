@@ -1,4 +1,4 @@
-import { identityValueDecoder, valueDecoder, orDefaultDecoder, fieldOrDefaultDecoder, enumDecoder } from "./decoders";
+import { identityValueDecoder, valueDecoder, orDefaultDecoder, fieldOrDefaultDecoder, enumDecoder } from "../decoders";
 import { string } from "jsonous";
 
 test("identity value decoder", function () {

@@ -1,5 +1,5 @@
-import { promiseQueue } from "./promiseQueue";
-import { asyncTimeout } from "./asyncTimeout";
+import { promiseQueue } from "../promiseQueue";
+import { asyncTimeout } from "../asyncTimeout";
 
 test("simple promise queue", function (done) {
   const addToQueue = promiseQueue(3);

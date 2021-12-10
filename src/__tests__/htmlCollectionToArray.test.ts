@@ -1,5 +1,5 @@
-import { htmlCollectionToArray } from "./htmlCollectionToArray";
-import { isArray } from "./is";
+import { htmlCollectionToArray } from "../htmlCollectionToArray";
+import { isArray } from "../is";
 
 function makeChildElement(text: string) {
   const div = document.createElement("div");

@@ -1,4 +1,4 @@
-import { isDeepEqual } from "./isDeepEqual";
+import { isDeepEqual } from "../isDeepEqual";
 
 test("Deep equals primitives", function () {
   expect(isDeepEqual(1, 1)).toBe(true);

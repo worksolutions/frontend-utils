@@ -1,4 +1,4 @@
-import { recursiveFind } from "./recursiveFind";
+import { recursiveFind } from "../recursiveFind";
 
 const id1 = { id: 1 };
 const id5 = { id: 5 };

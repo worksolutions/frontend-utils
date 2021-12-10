@@ -1,4 +1,4 @@
-import { path, splitByPoint } from "./path";
+import { path, splitByPoint } from "../path";
 
 test("path utils - 'splitByPoint'", function () {
   expect(splitByPoint("1.2.a")).toStrictEqual(["1", "2", "a"]);

@@ -1,4 +1,4 @@
-import { searchInString } from "./searchInString";
+import { searchInString } from "../searchInString";
 
 test("searchInString", function () {
   expect(searchInString("some string with hello word", "hello")).toBe(true);

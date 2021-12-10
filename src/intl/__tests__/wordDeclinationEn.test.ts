@@ -1,4 +1,4 @@
-import { wordDeclinationEn } from "./wordDeclinationEn";
+import { wordDeclinationEn } from "../intlDict";
 
 test("EN word declination function", function () {
   const titles = ["month", "months"];
