@@ -61,7 +61,7 @@ export class RequestManager {
     };
 
     if (requestConfig.contentType) {
-      requestData.headers["content-type"] = requestConfig.contentType;
+      requestData.headers!["content-type"] = requestConfig.contentType;
     }
 
     requestData[method === METHODS.GET ? "params" : "data"] = body;
