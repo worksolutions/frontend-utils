@@ -1,0 +1,9 @@
+{
+  "name": "nest-ts-fix-paths-plugin",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "description": "",
+  "private": true,
+  "author": "",
+  "license": "ISC"
+}
