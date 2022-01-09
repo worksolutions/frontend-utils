@@ -1,15 +1,11 @@
 {
   "name": "@worksolutions/utils",
   "private": false,
-  "version": "1.2.41",
+  "version": "1.2.42",
   "description": "",
   "types": "dist/esm/index.d.ts",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/worksolutions/frontend-utils"
-  },
   "scripts": {
     "format": "prettier --write --list-different \"src/**/*.{ts,tsx,js,json,yml}\"",
     "build": "rm -rf dist && NODE_ENV=production && tsc --module ESNext --outDir dist/esm && tsc --module commonjs --outDir dist/cjs",
@@ -17,6 +13,10 @@
     "test:coverage": "jest --coverage",
     "prepublish": "npm run test && npm run build",
     "lint": "eslint \"src/**/*.{ts,tsx}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/worksolutions/frontend-utils"
   },
   "author": "Anatoly Grabarov",
   "license": "ISC",
