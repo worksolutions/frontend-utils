@@ -282,3 +282,14 @@ test("INTL date zones", function () {
   expect(dateTime.hour).toBe(10);
   expect(dateTime.setZone("Europe/Moscow").hour).toBe(13);
 });
+
+test("INTL iso and utc", function () {
+  const intl = getIntl();
+  const isoString = "2022-02-21T07:17:31.072Z";
+
+  const dateTimeIso = intl.getDateTime(isoString, DateMode.__UNIVERSAL_ISO);
+  const dateTimeIsoZoneUTC = intl.getDateTime(isoString, DateMode.__UNIVERSAL_ISO, "utc");
+
+  expect(intl.formatDate(dateTimeIso, DateMode.DATE_TIME)).toBe("21.02.2022 10:17");
+  expect(intl.formatDate(dateTimeIsoZoneUTC, DateMode.DATE_TIME)).toBe("21.02.2022 07:17");
+});

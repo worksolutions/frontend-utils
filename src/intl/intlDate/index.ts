@@ -19,22 +19,16 @@ export enum DateMode {
   MINUTES = "MINUTES",
   SHORT_MINUTES = "SHORT_MINUTES",
   __UNIVERSAL_ISO = "__UNIVERSAL_ISO",
-  __UNIVERSAL_DATE = "__UNIVERSAL_DATE",
-  __UNIVERSAL_TIME = "__UNIVERSAL_TIME",
-  __UNIVERSAL_DATETIME = "__UNIVERSAL_DATETIME",
 }
 
 export interface IntlDateDictionaryInterface {
   languageCode: string;
-  matchDateModeAndLuxonTypeLiteral: Record<DateMode, string>;
+  matchDateModeAndLuxonTypeLiteral: Record<DateMode, string | Symbol>;
 }
 
 export class IntlDate {
   static universalDates = {
-    __UNIVERSAL_ISO: "",
-    __UNIVERSAL_DATE: "dd.MM.yyyy",
-    __UNIVERSAL_TIME: "HH:mm",
-    __UNIVERSAL_DATETIME: "dd.MM.yyyy HH:mm",
+    __UNIVERSAL_ISO: Symbol(),
   };
 
   private buildCurrentDate(config: IntlDateDictionaryInterface) {
@@ -47,23 +41,32 @@ export class IntlDate {
     this.buildCurrentDate(config);
   }
 
-  private getFormat(mode: DateMode | string) {
+  private getFormat(mode: string) {
     const matches = this.config.matchDateModeAndLuxonTypeLiteral;
-    if (mode in matches) return matches[mode as DateMode];
+    if (mode in matches) return matches[mode as DateMode] as string;
     return mode.toString();
   }
 
   formatDate = (date: DateTime, mode: DateMode | string) => {
-    if (mode === DateMode.__UNIVERSAL_ISO) return date.toISO({});
-    return date.toFormat(this.getFormat(mode), { locale: this.config.languageCode });
+    switch (mode) {
+      case DateMode.__UNIVERSAL_ISO:
+        return date.toISO({});
+      default:
+        return date.toFormat(this.getFormat(mode), { locale: this.config.languageCode });
+    }
   };
 
   localeString = (date: DateTime, options?: DateTimeFormatOptions) => date.toLocaleString(options);
 
   getDateTime = (text: string, mode: DateMode | string, zone?: string | Zone) => {
-    const options: DateTimeOptions = { locale: this.config.languageCode };
-    if (mode === DateMode.__UNIVERSAL_ISO) return DateTime.fromISO(text, { ...options, zone: zone || "UTC" });
-    return DateTime.fromFormat(text, this.getFormat(mode), { ...options, zone });
+    const options: DateTimeOptions = { locale: this.config.languageCode, zone };
+
+    switch (mode) {
+      case DateMode.__UNIVERSAL_ISO:
+        return DateTime.fromISO(text, options);
+      default:
+        return DateTime.fromFormat(text, this.getFormat(mode), options);
+    }
   };
 
   rebuildCurrentDate = () => this.buildCurrentDate(this.config);
