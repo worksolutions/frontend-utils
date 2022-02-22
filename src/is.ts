@@ -20,4 +20,8 @@ export function isPureObject(arg: any): arg is Record<string, any> {
   return is(Object, arg) && !Array.isArray(arg);
 }
 
+export function isSymbol(value: any): value is Symbol {
+  return typeof value === "symbol";
+}
+
 export const isNotNil = complement(isNil);
