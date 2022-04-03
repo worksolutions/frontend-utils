@@ -24,7 +24,7 @@ export * from "./isDeepEqual";
 export * from "./linkIsNative";
 export * from "./mapObjectEntries";
 export * from "./memoizeWithContext";
-export * from "./nbsp";
+export * from "./spacialStrings";
 export * from "./path";
 export * from "./searchInString";
 export * from "./splitPromiseIntoStates";
