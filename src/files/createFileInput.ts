@@ -10,16 +10,14 @@ export function createFileInput(onChange: (files: File[]) => void, multiply?: bo
   if (acceptTypes) input.accept = makeInputAccept(acceptTypes);
   document.body.appendChild(input);
 
-  const listener = () => {
+  input.addEventListener("change", function () {
     if (input.files!.length === 0) return;
     onChange([...input.files!]);
-  };
-
-  input.addEventListener("change", listener);
+  });
 
   return {
     open: () => input.click(),
-    destroy: () => document.body.removeChild(input),
+    destroy: () => void (document.body.contains(input) && document.body.removeChild(input)),
   };
 }
 
