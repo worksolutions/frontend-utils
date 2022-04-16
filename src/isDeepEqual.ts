@@ -1,5 +1,6 @@
 import { omit } from "ramda";
 
+// eslint-disable-next-line complexity
 export function isDeepEqual(objA: any, objB: any) {
   if (Object.is(objA, objB)) return true;
 
@@ -11,8 +12,7 @@ export function isDeepEqual(objA: any, objB: any) {
   const keysB = Object.keys(objB);
   if (keysA.length !== keysB.length) return false;
 
-  // @ts-ignore
-  const bHasOwnProperty = hasOwnProperty.bind(objB);
+  const bHasOwnProperty = global.hasOwnProperty.bind(objB);
   while (keysA.length > 0) {
     const key: any = keysA.pop();
 

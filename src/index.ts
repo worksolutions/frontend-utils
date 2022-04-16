@@ -8,7 +8,6 @@ export * from "./files/inputAccept";
 export * from "./intl/intlDate";
 export * from "./intl/intlDict";
 export * from "./types/FileInterface";
-export * from "./types/MatchStringStart";
 export * from "./arrangeArrayWith";
 export * from "./asyncPipe";
 export * from "./asyncTimeout";
