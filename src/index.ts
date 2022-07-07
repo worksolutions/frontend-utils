@@ -26,6 +26,7 @@ export * from "./memoizeWithContext";
 export * from "./spacialStrings";
 export * from "./path";
 export * from "./searchInString";
+export * from "./setAsyncInterval";
 export * from "./splitPromiseIntoStates";
 export * from "./stringMemoHelper";
 export * from "./promiseQueue";
