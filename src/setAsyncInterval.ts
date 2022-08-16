@@ -6,10 +6,13 @@ export function setAsyncInterval<ARGS extends any[]>(
   function generateTimer() {
     return setTimeout(async () => {
       await callback(...args);
-      timerId = generateTimer();
+      if (timerId) timerId = generateTimer();
     }, time);
   }
 
-  let timerId = generateTimer();
-  return () => clearTimeout(timerId);
+  let timerId: NodeJS.Timeout | null = generateTimer();
+  return () => {
+    if (timerId) clearTimeout(timerId);
+    timerId = null;
+  };
 }
