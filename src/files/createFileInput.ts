@@ -13,6 +13,7 @@ export function createFileInput(onChange: (files: File[]) => void, multiply?: bo
   input.addEventListener("change", function () {
     if (input.files!.length === 0) return;
     onChange([...input.files!]);
+    input.value = "";
   });
 
   return {
