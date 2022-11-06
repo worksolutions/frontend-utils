@@ -35,3 +35,4 @@ export * from "./rand";
 export * from "./findElementInDOMParentTree";
 export * from "./recursiveFind";
 export * from "./template";
+export * from "./waitFor";
