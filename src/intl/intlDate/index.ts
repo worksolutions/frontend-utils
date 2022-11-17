@@ -41,7 +41,7 @@ export class IntlDate {
     this.buildCurrentDate(config);
   }
 
-  private getFormat(mode: string) {
+  private getDateTimeFormat(mode: string) {
     const matches = this.config.matchDateModeAndLuxonTypeLiteral;
     if (mode in matches) return matches[mode as DateMode] as string;
     return mode.toString();
@@ -52,7 +52,7 @@ export class IntlDate {
       case DateMode.__UNIVERSAL_ISO:
         return date.toISO({});
       default:
-        return date.toFormat(this.getFormat(mode), { locale: this.config.languageCode });
+        return date.toFormat(this.getDateTimeFormat(mode), { locale: this.config.languageCode });
     }
   };
 
@@ -65,7 +65,7 @@ export class IntlDate {
       case DateMode.__UNIVERSAL_ISO:
         return DateTime.fromISO(text, options);
       default:
-        return DateTime.fromFormat(text, this.getFormat(mode), options);
+        return DateTime.fromFormat(text, this.getDateTimeFormat(mode), options);
     }
   };
 
