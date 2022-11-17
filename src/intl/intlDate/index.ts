@@ -41,7 +41,7 @@ export class IntlDate {
     this.buildCurrentDate(config);
   }
 
-  private getDateTimeFormat(mode: string) {
+  getDateTimeFormat(mode: string) {
     const matches = this.config.matchDateModeAndLuxonTypeLiteral;
     if (mode in matches) return matches[mode as DateMode] as string;
     return mode.toString();
