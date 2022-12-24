@@ -31,14 +31,10 @@ export class IntlDate {
     __UNIVERSAL_ISO: Symbol(),
   };
 
-  private buildCurrentDate(config: IntlDateDictionaryInterface) {
-    this.currentDate = DateTime.now().set({ millisecond: 0 }).setLocale(config.languageCode);
-  }
+  constructor(public config: IntlDateDictionaryInterface) {}
 
-  currentDate: DateTime = null!;
-
-  constructor(public config: IntlDateDictionaryInterface) {
-    this.buildCurrentDate(config);
+  getCurrentDateTime() {
+    return DateTime.now().set({ millisecond: 0 }).setLocale(this.config.languageCode);
   }
 
   getDateTimeFormat(mode: string) {
@@ -68,8 +64,6 @@ export class IntlDate {
         return DateTime.fromFormat(text, this.getDateTimeFormat(mode), options);
     }
   };
-
-  rebuildCurrentDate = () => this.buildCurrentDate(this.config);
 }
 
 export * from "./dateCleaner";
