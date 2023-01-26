@@ -1,20 +1,27 @@
-export function waitFor(condition: () => boolean, timeoutMS: number, checkIntervalMS = 100): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (condition()) {
+import { setAsyncInterval } from "./setAsyncInterval";
+
+export function waitFor(
+  condition: () => boolean | Promise<boolean>,
+  timeoutMS: number,
+  checkIntervalMS = 100,
+): Promise<void> {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve, reject) => {
+    if (await condition()) {
       resolve();
       return;
     }
 
     const startTime = Date.now();
-    const interval = setInterval(() => {
-      if (condition()) {
-        clearInterval(interval);
+    const stopTimer = setAsyncInterval(async () => {
+      if (await condition()) {
+        stopTimer();
         resolve();
         return;
       }
 
       if (Date.now() - startTime > timeoutMS) {
-        clearInterval(interval);
+        stopTimer();
         reject(new Error("waitFor timeout"));
       }
     }, checkIntervalMS);
