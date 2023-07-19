@@ -7,16 +7,26 @@ export function waitFor(
 ): Promise<void> {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
-    if (await condition()) {
-      resolve();
+    try {
+      if (await condition()) {
+        resolve();
+        return;
+      }
+    } catch (e) {
+      reject(e);
       return;
     }
 
     const startTime = Date.now();
     const stopTimer = setAsyncInterval(async () => {
-      if (await condition()) {
-        stopTimer();
-        resolve();
+      try {
+        if (await condition()) {
+          stopTimer();
+          resolve();
+          return;
+        }
+      } catch (e) {
+        reject(e);
         return;
       }
 
