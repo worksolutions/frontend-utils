@@ -1,8 +1,6 @@
 const thresh = 1024;
 
-const units = ["кб", "мб", "гб"]; //TODO: перенести в INTL
-
-export function convertBytesToHumanReadableFormat(bytes: number) {
+export function convertBytesToHumanReadableFormat(bytes: number, units: string[]) {
   if (bytes < thresh) return bytes + " б";
   let u = -1;
   do {
