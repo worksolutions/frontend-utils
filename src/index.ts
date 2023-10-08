@@ -16,6 +16,7 @@ export * from "./entries";
 export * from "./findByPredicate";
 export * from "./groupPromiseQueue";
 export * from "./htmlCollectionToArray";
+export * from "./identity";
 export * from "./is";
 export * from "./isDeepEqual";
 export * from "./linkIsNative";
