@@ -1,4 +1,4 @@
-import { isArray, isFunction, isNotNil, isNumber, isPureObject, isString } from "../is";
+import { isArray, isFunction, isNil, isNumber, isPureObject, isString } from "../is";
 
 test("detect arrays", function () {
   expect(isArray([])).toBe(true);
@@ -39,8 +39,8 @@ test("detect functions", function () {
   expect(isFunction(1)).toBe(false);
 });
 
-test("detect not null and not undefined", function () {
-  expect(isNotNil(null)).toBe(false);
-  expect(isNotNil(undefined)).toBe(false);
-  expect(isNotNil(1)).toBe(true);
+test("detect null or undefined", function () {
+  expect(isNil(null)).toBe(true);
+  expect(isNil(undefined)).toBe(true);
+  expect(isNil(1)).toBe(false);
 });

@@ -1,4 +1,4 @@
-import { ascend, prop } from "ramda";
+import { ascend } from "./sort";
 
 export function arrangeArrayWith<ITEM>(items: ITEM[], getIndex: (item: ITEM, index: number) => number) {
   const indexes = items
@@ -7,7 +7,7 @@ export function arrangeArrayWith<ITEM>(items: ITEM[], getIndex: (item: ITEM, ind
       if (newIndex === -1) throw new Error("Function 'getIndex' returned -1");
       return { index: newIndex, item };
     })
-    .sort(ascend(prop("index")));
+    .sort((a, b) => ascend(({ index }) => index, a, b));
 
-  return indexes.map(prop("item"));
+  return indexes.map(({ item }) => item);
 }

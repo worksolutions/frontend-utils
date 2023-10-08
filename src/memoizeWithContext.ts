@@ -1,4 +1,4 @@
-import { memoizeWith } from "ramda";
+import { memoizeWith } from "./memoizeWith";
 
 export function memoizeWithContext<T extends (this: any, ...args: readonly any[]) => any>(
   keyFn: (this: any, ...v: Parameters<T>) => string,

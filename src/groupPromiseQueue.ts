@@ -1,6 +1,5 @@
-import { range } from "ramda";
-
 import { promiseQueue } from "./promiseQueue";
+import { range } from "./range";
 
 export async function groupPromiseQueue(
   parallelCount: number,

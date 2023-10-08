@@ -1,4 +1,6 @@
-import { complement, is, isNil } from "ramda";
+export function is(Class: Function, value: any) {
+  return (!isNil(value) && value.constructor === Class) || value instanceof Class;
+}
 
 export function isString(arg: any): arg is string {
   return is(String, arg);
@@ -24,4 +26,6 @@ export function isSymbol(value: any): value is Symbol {
   return typeof value === "symbol";
 }
 
-export const isNotNil = complement(isNil);
+export function isNil(value: any): value is null | undefined {
+  return value === null || value === undefined;
+}

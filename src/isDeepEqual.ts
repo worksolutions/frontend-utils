@@ -1,4 +1,4 @@
-import { omit } from "ramda";
+import { omit } from "./omit";
 
 // eslint-disable-next-line complexity
 export function isDeepEqual(objA: any, objB: any) {

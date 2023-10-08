@@ -1,4 +1,4 @@
-import { memoizeWith } from "ramda";
+import { memoizeWith } from "../memoizeWith";
 
 export enum AcceptTypes {
   IMAGE = "image/*",
