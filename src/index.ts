@@ -12,6 +12,7 @@ export * from "./asyncTimeout";
 export * from "./capitalizeFirstStringCharacter";
 export * from "./events";
 export * from "./digitOnly";
+export * from "./dissoc";
 export * from "./entries";
 export * from "./findByPredicate";
 export * from "./groupPromiseQueue";
