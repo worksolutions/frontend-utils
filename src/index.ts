@@ -10,6 +10,7 @@ export * from "./arrangeArrayWith";
 export * from "./asyncPipe";
 export * from "./asyncTimeout";
 export * from "./capitalizeFirstStringCharacter";
+export * from "./clamp";
 export * from "./clone";
 export * from "./events";
 export * from "./digitOnly";
