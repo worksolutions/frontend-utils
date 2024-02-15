@@ -1,6 +1,6 @@
 export function recursiveFind<
   SUB_ITEMS_FIELD_NAME extends string,
-  ITEM extends { [key in SUB_ITEMS_FIELD_NAME]?: ITEM[] } & Omit<object, SUB_ITEMS_FIELD_NAME>,
+  ITEM extends object,
   INJECT_LEVEL extends boolean = false,
 >(
   subItemsFieldName: SUB_ITEMS_FIELD_NAME,
