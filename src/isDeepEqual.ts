@@ -12,7 +12,8 @@ export function isDeepEqual(objA: any, objB: any) {
   const keysB = Object.keys(objB);
   if (keysA.length !== keysB.length) return false;
 
-  const bHasOwnProperty = global.hasOwnProperty.bind(objB);
+  // @ts-ignore
+  const bHasOwnProperty = hasOwnProperty.bind(objB);
   while (keysA.length > 0) {
     const key: any = keysA.pop();
 
