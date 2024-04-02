@@ -2,7 +2,7 @@ import { memoizeWith } from "../memoizeWith";
 
 export enum AcceptTypes {
   IMAGE = "image/*",
-  GLB = "model/gltf-binary",
+  GLB = ".glb",
   ALL = "*",
 }
 
