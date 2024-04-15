@@ -46,5 +46,6 @@ export * from "./findElementInDOMParentTree";
 export * from "./recursiveFind";
 export * from "./template";
 export * from "./uniq";
+export * from "./update";
 export * from "./waitFor";
 export * from "./without";
