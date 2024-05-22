@@ -1,12 +1,11 @@
 import { setAsyncInterval } from "./setAsyncInterval";
 
-export function waitFor(
-  condition: () => boolean | Promise<boolean>,
-  timeoutMS: number,
-  checkIntervalMS = 100,
-): Promise<void> {
+type Stoppable = Promise<void> & { stop: () => void };
+
+export function waitFor(condition: () => boolean | Promise<boolean>, timeoutMS: number, checkIntervalMS = 100) {
+  let stoppedBeforeTickPassed = false;
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve, reject) => {
+  const promise = new Promise<void>(async (resolve, reject) => {
     try {
       if (await condition()) {
         resolve();
@@ -35,5 +34,18 @@ export function waitFor(
         reject(new Error("waitFor timeout"));
       }
     }, checkIntervalMS);
-  });
+
+    promise.stop = function () {
+      stopTimer();
+      reject(new Error("waitFor stop"));
+    };
+
+    if (stoppedBeforeTickPassed) promise.stop();
+  }) as Stoppable;
+
+  promise.stop = function () {
+    stoppedBeforeTickPassed = true;
+  };
+
+  return promise;
 }
