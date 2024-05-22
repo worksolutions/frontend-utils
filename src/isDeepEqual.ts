@@ -6,6 +6,8 @@ export function isDeepEqual(objA: any, objB: any) {
 
   if (typeof objA !== "object" || objA === null || typeof objB !== "object" || objB === null) return false;
 
+  if (objA instanceof Date && objB instanceof Date) return objA === objB;
+
   if (objA.prototype !== objB.prototype) return false;
 
   const keysA = Object.keys(objA);
