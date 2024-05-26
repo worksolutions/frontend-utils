@@ -20,6 +20,8 @@ export function promiseQueue(parallelCount: number) {
     });
   }
 
+  addToQueue.activeTasks = activeTasks;
+
   function runFirstInactiveTask() {
     const firstInactiveTask = inactiveTasksMakers.shift();
     if (!firstInactiveTask) return;
