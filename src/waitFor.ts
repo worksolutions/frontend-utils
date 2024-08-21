@@ -2,15 +2,15 @@ import { setAsyncInterval } from "./setAsyncInterval";
 
 const timeoutErr = new Error("waitFor stop");
 
+type Options = { abortSignal?: AbortSignal; timeoutMS?: number; checkIntervalMS?: number };
+
 export function waitFor(
-  abortSignal: AbortSignal,
   condition: () => boolean | Promise<boolean>,
-  timeoutMS: number,
-  checkIntervalMS = 100,
+  { abortSignal, timeoutMS = Infinity, checkIntervalMS = 100 }: Options = {},
 ) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<void>(async (resolve, reject) => {
-    if (abortSignal.aborted) return reject(timeoutErr);
+    if (abortSignal?.aborted) return reject(timeoutErr);
     try {
       if (await condition()) return resolve();
     } catch (e) {
@@ -35,6 +35,6 @@ export function waitFor(
       }
     }, checkIntervalMS);
 
-    abortSignal.addEventListener("abort", stopTimer);
+    abortSignal?.addEventListener("abort", stopTimer);
   });
 }
