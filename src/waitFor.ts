@@ -1,19 +1,20 @@
 import { setAsyncInterval } from "./setAsyncInterval";
 
-type Stoppable = Promise<void> & { stop: () => void };
+const timeoutErr = new Error("waitFor stop");
 
-export function waitFor(condition: () => boolean | Promise<boolean>, timeoutMS: number, checkIntervalMS = 100) {
-  let stoppedBeforeTickPassed = false;
+export function waitFor(
+  abortSignal: AbortSignal,
+  condition: () => boolean | Promise<boolean>,
+  timeoutMS: number,
+  checkIntervalMS = 100,
+) {
   // eslint-disable-next-line no-async-promise-executor
-  const promise = new Promise<void>(async (resolve, reject) => {
+  return new Promise<void>(async (resolve, reject) => {
+    if (abortSignal.aborted) return reject(timeoutErr);
     try {
-      if (await condition()) {
-        resolve();
-        return;
-      }
+      if (await condition()) return resolve();
     } catch (e) {
-      reject(e);
-      return;
+      return reject(e);
     }
 
     const startTime = Date.now();
@@ -25,27 +26,15 @@ export function waitFor(condition: () => boolean | Promise<boolean>, timeoutMS: 
           return;
         }
       } catch (e) {
-        reject(e);
-        return;
+        return reject(e);
       }
 
       if (Date.now() - startTime > timeoutMS) {
         stopTimer();
-        reject(new Error("waitFor timeout"));
+        reject(timeoutErr);
       }
     }, checkIntervalMS);
 
-    promise.stop = function () {
-      stopTimer();
-      reject(new Error("waitFor stop"));
-    };
-
-    if (stoppedBeforeTickPassed) promise.stop();
-  }) as Stoppable;
-
-  promise.stop = function () {
-    stoppedBeforeTickPassed = true;
-  };
-
-  return promise;
+    abortSignal.addEventListener("abort", stopTimer);
+  });
 }
