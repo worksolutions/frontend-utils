@@ -1,6 +1,6 @@
 import { setAsyncInterval } from "./setAsyncInterval";
 
-const timeoutErr = new Error("waitFor stop");
+const err = new Error("waitFor stop");
 
 type Options = { abortSignal?: AbortSignal; timeoutMS?: number; checkIntervalMS?: number };
 
@@ -10,7 +10,7 @@ export function waitFor(
 ) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<void>(async (resolve, reject) => {
-    if (abortSignal?.aborted) return reject(timeoutErr);
+    if (abortSignal?.aborted) return reject(err);
     try {
       if (await condition()) return resolve();
     } catch (e) {
@@ -19,6 +19,8 @@ export function waitFor(
 
     const startTime = Date.now();
     const stopTimer = setAsyncInterval(async () => {
+      if (abortSignal?.aborted) return reject(err);
+
       try {
         if (await condition()) {
           stopTimer();
@@ -31,7 +33,7 @@ export function waitFor(
 
       if (Date.now() - startTime > timeoutMS) {
         stopTimer();
-        reject(timeoutErr);
+        reject(err);
       }
     }, checkIntervalMS);
 
