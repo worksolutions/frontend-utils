@@ -3,6 +3,7 @@ import { memoizeWith } from "../memoizeWith";
 export enum AcceptTypes {
   IMAGE = "image/*",
   GLB = ".glb",
+  GLTF = ".gltf",
   JSON = ".json",
   ALL = "*",
 }
