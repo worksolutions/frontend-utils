@@ -3,7 +3,6 @@ export * from "./decorators/preventDefault";
 export * from "./decorators/stopPropagation";
 export * from "./files/bytesToHumanReadableFormat";
 export * from "./files/createFileInput";
-export * from "./files/inputAccept";
 export * from "./intl/intlDate";
 export * from "./types/FileInterface";
 export * from "./arrangeArrayWith";
