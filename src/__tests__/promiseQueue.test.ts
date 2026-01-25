@@ -22,9 +22,12 @@ test("simple promise queue", function (done) {
 
   addToQueue(() => asyncTimeout(100).then(add(6)));
   addToQueue(() => asyncTimeout(100).then(add(8)));
-  // addToQueue(() => asyncTimeout(100).then(add(9))).then(() => {
-  //   expect(results).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]); // TODO: FIX maybe fall
-  //   done();
-  // });
-  done();
+  addToQueue(() => asyncTimeout(100).then(add(9)));
+
+  asyncTimeout(105).then(() => expect(results).toStrictEqual([1, 2, 3]));
+  asyncTimeout(205).then(() => expect(results).toStrictEqual([1, 2, 3, 4]));
+  asyncTimeout(305).then(() => expect(results).toStrictEqual([1, 2, 3, 4, 5, 6]));
+  asyncTimeout(405).then(() => expect(results).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]));
+
+  asyncTimeout(410).then(done);
 });

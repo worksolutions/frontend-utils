@@ -1,31 +1,34 @@
-export function promiseQueue(parallelCount: number) {
-  const activeTasks: Promise<any>[] = [];
-  const inactiveTasksMakers: (() => Promise<any>)[] = [];
+export type PromiseQueueContextWrapper = <T>(fn: () => Promise<T>) => () => Promise<T>;
 
-  function addToQueue<T>(taskMaker: () => Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const makeTask = () => taskMaker().then(resolve, reject);
+export function promiseQueue(parallelCount: number, wrapTask?: PromiseQueueContextWrapper) {
+  const activeTasks = new Set<Promise<any>>();
+  const inactiveRuns: Array<() => void> = [];
 
-      if (activeTasks.length < parallelCount) {
-        const task = makeTask();
-        activeTasks.push(task);
-        task.finally(() => {
-          activeTasks.splice(activeTasks.indexOf(task), 1);
-          runFirstInactiveTask();
-        });
-        return;
-      }
+  const wrap: PromiseQueueContextWrapper = wrapTask ?? ((task) => task);
 
-      inactiveTasksMakers.push(makeTask);
-    });
+  function runNext() {
+    if (activeTasks.size >= parallelCount) return;
+    const next = inactiveRuns.shift();
+    if (next) next();
   }
 
-  addToQueue.activeTasks = activeTasks;
+  function addToQueue<T>(taskMaker: () => Promise<T>): Promise<T> {
+    const wrappedTask = wrap(taskMaker);
 
-  function runFirstInactiveTask() {
-    const firstInactiveTask = inactiveTasksMakers.shift();
-    if (!firstInactiveTask) return;
-    addToQueue(firstInactiveTask);
+    return new Promise<T>((resolve, reject) => {
+      const run = () => {
+        const task = wrappedTask()
+          .then(resolve, reject)
+          .finally(() => {
+            activeTasks.delete(task);
+            runNext();
+          });
+
+        activeTasks.add(task);
+      };
+
+      activeTasks.size < parallelCount ? run() : inactiveRuns.push(run);
+    });
   }
 
   return addToQueue;
