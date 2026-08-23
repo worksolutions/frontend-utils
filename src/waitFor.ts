@@ -1,7 +1,5 @@
 import { setAsyncInterval } from "./setAsyncInterval";
 
-const err = new Error("waitFor stop");
-
 type Options = { abortSignal?: AbortSignal; timeoutMS?: number; checkIntervalMS?: number };
 
 export function waitFor(
@@ -10,16 +8,16 @@ export function waitFor(
 ) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<void>(async (resolve, reject) => {
-    if (abortSignal?.aborted) return reject(err);
+    if (abortSignal?.aborted) return reject(new Error("Aborted"));
     try {
       if (await condition()) return resolve();
     } catch (e) {
       return reject(e);
     }
 
-    const startTime = Date.now();
+    const startTime = waitForInternalNow();
     const stopTimer = setAsyncInterval(async () => {
-      if (abortSignal?.aborted) return reject(err);
+      if (abortSignal?.aborted) return;
 
       try {
         if (await condition()) {
@@ -28,15 +26,23 @@ export function waitFor(
           return;
         }
       } catch (e) {
+        stopTimer();
         return reject(e);
       }
 
-      if (Date.now() - startTime > timeoutMS) {
+      if (waitForInternalNow() - startTime > timeoutMS) {
         stopTimer();
-        reject(err);
+        reject(new Error("Timeout"));
       }
     }, checkIntervalMS);
 
-    abortSignal?.addEventListener("abort", stopTimer);
+    abortSignal?.addEventListener("abort", () => {
+      stopTimer();
+      reject(new Error("Aborted"));
+    });
   });
+}
+
+function waitForInternalNow() {
+  return +new Date();
 }
